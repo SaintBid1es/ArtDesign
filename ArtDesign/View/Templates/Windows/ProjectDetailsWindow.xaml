@@ -1,0 +1,185 @@
+﻿<Window x:Class="ArtDesign.View.Templates.Windows.ProjectDetailsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Детали проекта" 
+        Height="700" Width="1000"
+        WindowStartupLocation="CenterScreen"
+        Background="#F0F0F0">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <!-- Верхний блок: информация о проекте -->
+            <RowDefinition Height="Auto"/>
+            <!-- Низ: две колонки (WorkStages, Files) -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- (1) Верх: информация о проекте + кнопки «Добавить» -->
+        <Border Grid.Row="0" 
+                CornerRadius="10"
+                Background="White"
+                Padding="20"
+                Margin="0,0,0,10"
+                BorderBrush="#DDD" 
+                BorderThickness="1">
+            <StackPanel Orientation="Vertical">
+                <!-- Название проекта (большим) -->
+                <TextBlock Text="{Binding ProjectNameInfo}" 
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10"/>
+
+                <!-- Описание проекта -->
+                <TextBlock Text="{Binding DescriptionInfo}"
+                           FontSize="14"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,10"/>
+
+                <!-- Даты -->
+                <TextBlock Text="{Binding DateRangeInfo}"
+                           FontSize="12"
+                           Opacity="0.7"
+                           Margin="0,0,0,15"/>
+
+                <!-- Кнопки «Добавить этап» и «Добавить файл» -->
+                <StackPanel Orientation="Horizontal">
+                    <Button Content="Добавить этап"
+                            Margin="0,0,10,0"
+                            Padding="10,5"
+                            Command="{Binding AddWorkStageCommand}"/>
+                    <Button Content="Добавить файл"
+                            Padding="10,5"
+                            Command="{Binding AddFileCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- (2) Низ: две колонки (слева этапы, справа файлы) -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- (2a) Слева: ЭТАПЫ ПРОЕКТА -->
+            <StackPanel Grid.Column="0" Orientation="Vertical">
+                <TextBlock Text="ЭТАПЫ ПРОЕКТА"
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10"/>
+
+                <!-- Скроллируемый список карточек WorkStage -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding WorkStages}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="10"
+                                        Background="White"
+                                        Padding="10"
+                                        Margin="10"
+                                        BorderBrush="#DDD" 
+                                        BorderThickness="1"
+                                        Width="250">
+                                    <StackPanel>
+                                        <!-- Название -->
+                                        <TextBlock Text="{Binding StageName}" 
+                                                   FontWeight="Bold"
+                                                   FontSize="14"
+                                                   Margin="0,0,0,5"/>
+                                        <!-- Даты -->
+                                        <TextBlock FontSize="12" Margin="0,0,0,5">
+                                            <Run Text="C "/>
+                                            <Run Text="{Binding StartDate, StringFormat={}{0:dd.MM.yyyy}}"/>
+                                            <Run Text=" по "/>
+                                            <Run Text="{Binding EndDate, StringFormat={}{0:dd.MM.yyyy}}"/>
+                                        </TextBlock>
+
+                                        <!-- Кнопки -->
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                                            <Button Content="Изм."
+                                                    Margin="0,0,10,0"
+                                                    Padding="5,2"
+                                                    Command="{Binding DataContext.EditStageCommand, 
+                                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="Уд."
+                                                    Padding="5,2"
+                                                    Command="{Binding DataContext.DeleteStageCommand, 
+                                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+
+            <!-- (2b) Справа: ФАЙЛЫ -->
+            <StackPanel Grid.Column="1" Orientation="Vertical">
+                <TextBlock Text="ФАЙЛЫ" 
+                           FontSize="16"
+                           FontWeight="Bold"
+                           Margin="0,0,0,10"/>
+
+                <!-- Скроллируемый список карточек FileEntity -->
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ItemsControl ItemsSource="{Binding Files}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border CornerRadius="10"
+                                        Background="White"
+                                        Padding="10"
+                                        Margin="10"
+                                        BorderBrush="#DDD"
+                                        BorderThickness="1"
+                                        Width="250">
+                                    <StackPanel>
+                                        <!-- Название файла -->
+                                        <TextBlock Text="{Binding FileName}"
+                                                   FontWeight="Bold"
+                                                   FontSize="14"
+                                                   Margin="0,0,0,5"/>
+                                        <!-- Путь (опционально) -->
+                                        <TextBlock Text="{Binding FilePath}"
+                                                   FontSize="12"
+                                                   Opacity="0.7"
+                                                   TextWrapping="Wrap"
+                                                   Margin="0,0,0,5"/>
+                                        <!-- Кнопки -->
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
+                                            <Button Content="Откр."
+                                                    Margin="0,0,10,0"
+                                                    Padding="5,2"
+                                                    Command="{Binding DataContext.OpenFileCommand, 
+                                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                            <Button Content="Уд."
+                                                    Padding="5,2"
+                                                    Command="{Binding DataContext.DeleteFileCommand, 
+                                                              RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

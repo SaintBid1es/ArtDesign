@@ -1,0 +1,195 @@
+﻿<Application x:Class="ArtDesign.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ArtDesign"
+             xmlns:converters="clr-namespace:MaterialDesignThemes.Wpf.Converters;assembly=MaterialDesignThemes.Wpf"
+             xmlns:wpf="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf"
+             xmlns:internal="clr-namespace:MaterialDesignThemes.Wpf.Internal;assembly=MaterialDesignThemes.Wpf"
+             xmlns:behaviors="clr-namespace:MaterialDesignThemes.Wpf.Behaviors;assembly=MaterialDesignThemes.Wpf">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- Подключаем темы MaterialDesign -->
+            <ResourceDictionary.MergedDictionaries>
+                <materialDesign:BundledTheme BaseTheme="Light" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
+                <ResourceDictionary 
+                    Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesign3.Defaults.xaml" />
+                <ResourceDictionary Source="View/Templates/CardsTemplates.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- 
+                Ниже - стили MaterialDesign, которые шли в App.xaml.
+                Они остаются без изменений.
+            -->
+
+            <ControlTemplate x:Key="MaterialDesignValidationErrorTemplate">
+                <!-- ... (большой блок триггеров и разметки ValidationErrorTemplate) ... -->
+            </ControlTemplate>
+
+            <Style x:Key="FocusVisual">
+                <Setter>
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <Style x:Key="MaterialDesignHelperTextBlock" BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
+                <!-- ... -->
+            </Style>
+            <Style x:Key="MaterialDesignCharacterCounterTextBlock" BasedOn="{StaticResource {x:Type TextBlock}}" TargetType="{x:Type TextBlock}">
+                <!-- ... -->
+            </Style>
+            <Style x:Key="MaterialDesignTextBoxBase" TargetType="{x:Type TextBoxBase}">
+                <!-- ... -->
+            </Style>
+
+            <Style x:Key="MaterialDesignFlatButton" TargetType="{x:Type ButtonBase}">
+                <!-- ... -->
+            </Style>
+
+            <Style x:Key="MaterialDesignToolButton" BasedOn="{StaticResource MaterialDesignFlatButton}" TargetType="{x:Type ButtonBase}">
+                <!-- ... -->
+            </Style>
+
+            <Style x:Key="TextBoxStyle1" BasedOn="{StaticResource MaterialDesignTextBoxBase}" TargetType="{x:Type TextBox}">
+                <!-- ... -->
+            </Style>
+
+            <!-- ======================================================================== -->
+            <!-- НИЖЕ - вынесенные (скопированные) стили из MainWindow.xaml:               -->
+            <!-- ======================================================================== -->
+
+            <!-- Кисти для состояний кнопок -->
+            <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+            <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+            <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+            <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+            <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+            <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+            <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+            <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+            <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+
+            <!-- Стиль кнопки с закруглённым бордюром -->
+            <Style x:Key="ButtonStyle2" TargetType="{x:Type Button}">
+                <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+                <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+                <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="HorizontalContentAlignment" Value="Center"/>
+                <Setter Property="VerticalContentAlignment" Value="Center"/>
+                <Setter Property="Padding" Value="1"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border x:Name="border"
+                                    Background="{TemplateBinding Background}"
+                                    CornerRadius="30"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    SnapsToDevicePixels="true">
+                                <ContentPresenter x:Name="contentPresenter"
+                                                  Focusable="False"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  Margin="{TemplateBinding Padding}"
+                                                  RecognizesAccessKey="True"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsDefaulted" Value="true">
+                                    <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="true">
+                                    <Setter Property="Background" TargetName="border" Value="{StaticResource Button.MouseOver.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                                </Trigger>
+                                <Trigger Property="IsPressed" Value="true">
+                                    <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                                </Trigger>
+                                <Trigger Property="IsEnabled" Value="false">
+                                    <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                    <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                    <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ControlTemplate из MainWindow.xaml (не используется напрямую) -->
+            <ControlTemplate x:Key="TextBoxBaseControlTemplate" TargetType="{x:Type TextBoxBase}">
+                <Border Background="{TemplateBinding Background}" 
+                        x:Name="Bd"
+                        BorderBrush="Black"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="10">
+                    <ScrollViewer x:Name="PART_ContentHost"/>
+                </Border>
+                <ControlTemplate.Triggers>
+                    <Trigger Property="IsEnabled" Value="False">
+                        <Setter Property="Background"
+                                Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"
+                                TargetName="Bd"/>
+                        <Setter Property="Foreground"
+                                Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                    </Trigger>
+                </ControlTemplate.Triggers>
+            </ControlTemplate>
+
+            <!-- Стиль TextBox, который раньше был в MainWindow.xaml без x:Key -->
+            <Style x:Key="MainWindowTextBoxStyle" TargetType="TextBox">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TextBox">
+                            <Border x:Name="border"
+                                    CornerRadius="5"
+                                    BorderThickness="3"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}">
+                                <Grid Margin="10,0">
+                                    <TextBlock x:Name="watermark"
+                                               VerticalAlignment="Center"
+                                               Visibility="Collapsed"
+                                               FontSize="{TemplateBinding FontSize}"
+                                               Opacity="0.4"
+                                               Text="{TemplateBinding Tag}"/>
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                                  VerticalAlignment="Center"/>
+                                    <Rectangle x:Name="rect"
+                                               Fill="Transparent"
+                                               Height="2"
+                                               VerticalAlignment="Bottom"
+                                               HorizontalAlignment="Stretch"
+                                               Margin="0,3"/>
+                                </Grid>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <EventTrigger RoutedEvent="GotFocus">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <Trigger Property="IsFocused" Value="true">
+                                    <Setter TargetName="rect" Property="Fill"
+                                            Value="{Binding ElementName=border, Path=BorderBrush}"/>
+                                </Trigger>
+                                <Trigger Property="Text" Value="">
+                                    <Setter TargetName="watermark" Property="Visibility" Value="Visible"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

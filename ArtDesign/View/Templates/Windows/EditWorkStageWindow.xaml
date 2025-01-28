@@ -1,0 +1,60 @@
+﻿<Window x:Class="ArtDesign.View.Templates.Windows.EditWorkStageWindow"
+          xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Редактирование этапа"
+        Height="500" Width="500"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- StageName -->
+            <RowDefinition Height="Auto"/> <!-- Дата начала/окончания -->
+            <RowDefinition Height="Auto"/> <!-- ProjectId (ComboBox) -->
+            <RowDefinition Height="Auto"/> <!-- EmployeeId (ComboBox) -->
+            <RowDefinition Height="*"   />
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- StageName -->
+        <StackPanel Orientation="Horizontal" Grid.Row="0">
+            <TextBlock Text="Название этапа:" Width="120" VerticalAlignment="Center"/>
+            <TextBox Width="200"
+                     Text="{Binding WorkStage.StageName, UpdateSourceTrigger=PropertyChanged, ValidatesOnDataErrors=True}"/>
+        </StackPanel>
+
+        <!-- Дата начала / окончания -->
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,10,0,0">
+            <TextBlock Text="Дата начала:" Width="120" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding WorkStage.StartDate, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="   Окончание:" Margin="20,0,5,0" VerticalAlignment="Center"/>
+            <DatePicker SelectedDate="{Binding WorkStage.EndDate, UpdateSourceTrigger=PropertyChanged}"/>
+        </StackPanel>
+
+        <!-- Project (ComboBox) -->
+        <StackPanel Orientation="Horizontal" Grid.Row="2" Margin="0,10,0,0">
+            <TextBlock Text="Проект:" Width="120" VerticalAlignment="Center"/>
+            <ComboBox Width="200"
+                      DisplayMemberPath="ProjectName"
+                      SelectedValuePath="ID"
+                      SelectedValue="{Binding SelectedProjectId, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding AllProjects}"/>
+        </StackPanel>
+
+        <!-- Employee (ComboBox) -->
+        <StackPanel Orientation="Horizontal" Grid.Row="3" Margin="0,10,0,0">
+            <TextBlock Text="Сотрудник:" Width="120" VerticalAlignment="Center"/>
+            <ComboBox Width="200"
+                      DisplayMemberPath="Surname"
+                      SelectedValuePath="ID"
+                      SelectedValue="{Binding SelectedEmployeeId, UpdateSourceTrigger=PropertyChanged}"
+                      ItemsSource="{Binding AllEmployees}"/>
+        </StackPanel>
+
+        <!-- Кнопки -->
+        <StackPanel Orientation="Horizontal" Grid.Row="5" HorizontalAlignment="Center">
+            <Button Content="Сохранить" Width="100" Margin="10"
+                    Command="{Binding SaveCommand}"/>
+            <Button Content="Отмена" Width="100" Margin="10"
+                    Command="{Binding CancelCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window>

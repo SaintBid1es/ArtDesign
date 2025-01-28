@@ -1,0 +1,85 @@
+﻿<Window x:Class="ArtDesign.ShellView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:local="clr-namespace:ArtDesign"
+        xmlns:viewModel="clr-namespace:ArtDesign.ViewModel"
+        xmlns:view="clr-namespace:ArtDesign.View"
+        mc:Ignorable="d"
+        Title="ShellView" Height="450" Width="800">
+    <Window.DataContext>
+        <viewModel:ShellViewModel />
+    </Window.DataContext>
+<Window.Resources>
+        <!-- Преобразователь bool -> Visibility -->
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+        
+        <DataTemplate DataType="{x:Type viewModel:LoginViewModel}">
+            <view:LoginView />
+        </DataTemplate>
+                
+        <DataTemplate DataType="{x:Type viewModel:ProjectsViewModel}">
+            <view:ProjectsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:ClientsViewModel}">
+            <view:ClientsView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:EmployeesViewModel}">
+            <view:EmployeesView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type viewModel:ReportsViewModel}">
+            <view:ReportsView />
+        </DataTemplate>
+    </Window.Resources>
+
+   <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Шапка + кнопки -->
+            <RowDefinition Height="*"/>    <!-- Основной контент -->
+        </Grid.RowDefinitions>
+
+        <!-- Шапка, включающая кнопки навигации справа -->
+        <Border Grid.Row="0" Background="Blue" Padding="10">
+            <DockPanel LastChildFill="False">
+                <!-- Название приложения, слева -->
+                <TextBlock Text="АртПроект"
+                           Foreground="White"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Left" />
+
+                <!-- Панель навигации, справа.
+                     Показываем, только если авторизован (IsLoggedIn = true). -->
+                <StackPanel Orientation="Horizontal"
+                            Visibility="{Binding IsLoggedIn, Converter={StaticResource BoolToVis}}">
+
+                    <ItemsControl ItemsSource="{Binding NavItems}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button Content="{Binding Title}"
+                                        Margin="5,0,0,0"
+                                        Padding="10,5"
+                                        Foreground="White"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        FontSize="16"
+                                        Command="{Binding Command}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- Основной контент -->
+        <ContentControl Grid.Row="1"
+                        Content="{Binding CurrentViewModel}" />
+    </Grid>
+</Window>
