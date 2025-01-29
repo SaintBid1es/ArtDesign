@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ArtDesign.Model;
+using ArtDesign.ViewModel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
@@ -18,7 +19,8 @@ namespace ArtDesign.Services
             List<Client> clients,
             List<Status> statuses,
             List<WorkStage> workStages,
-            string filePath)
+            string filePath,
+            ReportTypeEnum reportType) // New parameter
         {
             // Создаем директорию, если не существует
             var directory = Path.GetDirectoryName(filePath);
@@ -58,14 +60,24 @@ namespace ArtDesign.Services
                 };
                 document.Add(reportTitle);
 
-                // Раздел 1: Количество выполненных проектов за период
-                ComposeCompletedProjectsSection(document, dateFrom, dateTo, projects, statuses, workStages, tableHeaderFont, tableFont);
+                // Генерация разделов в зависимости от типа отчета
+                switch (reportType)
+                {
+                    case ReportTypeEnum.CompletedProjects:
+                        ComposeCompletedProjectsSection(document, dateFrom, dateTo, projects, statuses, workStages, tableHeaderFont, tableFont);
+                        break;
 
-                // Раздел 2: Загруженность сотрудников
-                ComposeEmployeeWorkloadSection(document, employees, workStages, tableHeaderFont, tableFont);
+                    case ReportTypeEnum.EmployeeWorkload:
+                        ComposeEmployeeWorkloadSection(document, employees, workStages, tableHeaderFont, tableFont);
+                        break;
 
-                // Раздел 3: История заказов по клиентам
-                ComposeClientOrderHistorySection(document, clients, projects, statuses, tableHeaderFont, tableFont);
+                    case ReportTypeEnum.ClientOrderHistory:
+                        ComposeClientOrderHistorySection(document, clients, projects, statuses, tableHeaderFont, tableFont);
+                        break;
+
+                    default:
+                        throw new ArgumentException("Неизвестный тип отчета.");
+                }
             }
             catch (Exception ex)
             {

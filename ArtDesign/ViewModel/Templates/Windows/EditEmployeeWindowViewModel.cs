@@ -1,7 +1,10 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Controls;
 using ArtDesign.Database;
 using ArtDesign.Helpers;
 using ArtDesign.Model;
@@ -12,6 +15,7 @@ namespace ArtDesign.ViewModel.Templates.Windows
     {
         private readonly DataManager _dataManager;
         private readonly bool _isNew;
+        
 
         public Employee Employee { get; set; }
         public ObservableCollection<Role> Roles { get; set; }
@@ -45,6 +49,47 @@ namespace ArtDesign.ViewModel.Templates.Windows
                 MessageBox.Show("Заполните обязательные поля (Фамилия, Имя, Логин, Пароль).");
                 return;
             }
+            if (Employee.Role == null)
+            {
+                MessageBox.Show("Выберите роль");
+                return;
+            }
+           
+
+            if (Employee.Surname.Length < 4 || Employee.Surname.Length > 20){
+                MessageBox.Show("Фамилию от 4 до 20 символов");
+                return;
+            }
+            if (Employee.Name.Length < 4 || Employee.Name.Length > 20)
+            {
+                MessageBox.Show("Имя от 4 до 20 символов");
+                return;
+            }
+            if(!Regex.Match(Employee.Name, @"[а-яА-Я]|[a-zA-Z]").Success)
+            {
+                MessageBox.Show("Только буквы в имени");
+                return;
+            }
+            if (!Regex.Match(Employee.Surname, @"[а-яА-Я]|[a-zA-Z]").Success)
+            {
+                MessageBox.Show("Только буквы в фамилии");
+                return;
+            }
+            if (Employee.Password.Length < 4 || Employee.Name.Length > 20)
+            {
+                MessageBox.Show("Пароль должен содержать от 4 до 20 символов");
+                return;
+            }
+            if (Employee.Login.Length < 4 || Employee.Login.Length > 20)
+            {
+                MessageBox.Show("Логин должен содержать от 4 до 20 символов");
+                return;
+            }
+
+
+
+
+
 
             if (_isNew)
             {
@@ -115,6 +160,7 @@ namespace ArtDesign.ViewModel.Templates.Windows
             }
         }
 
+
         public string Error => null;
 
         private bool IsValid()
@@ -122,6 +168,7 @@ namespace ArtDesign.ViewModel.Templates.Windows
             return string.IsNullOrEmpty(this[nameof(Employee.Surname)]) &&
                    string.IsNullOrEmpty(this[nameof(Employee.Name)]) &&
                    string.IsNullOrEmpty(this[nameof(Employee.Login)]) &&
+                   string.IsNullOrEmpty(this[nameof(Employee.Role)]) &&
                    string.IsNullOrEmpty(this[nameof(Employee.Password)]);
         }
 

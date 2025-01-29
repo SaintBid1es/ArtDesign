@@ -47,7 +47,8 @@
         <!-- Роль -->
         <StackPanel Orientation="Horizontal" Grid.Row="4" Margin="0,10,0,0">
             <TextBlock Text="Роль:" Width="120" VerticalAlignment="Center"/>
-            <ComboBox Width="200"
+            <ComboBox Name="CbxRole"
+                Width="200"
                       ItemsSource="{Binding Roles}"
                       SelectedItem="{Binding Employee.Role, Mode=TwoWay}"
                       DisplayMemberPath="RoleName"

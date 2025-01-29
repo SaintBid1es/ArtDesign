@@ -38,13 +38,33 @@ namespace ArtDesign.ViewModel
             {
                 if (SetField(ref _isGeneratingReport, value))
                 {
-                  
                     AddReportCommand.RaiseCanExecuteChanged();
                 }
             }
         }
 
-        public ReportsViewModel() { }
+        // New Properties for Report Types
+        public ObservableCollection<ReportType> ReportTypes { get; set; }
+        private ReportType _selectedReportType;
+        public ReportType SelectedReportType
+        {
+            get => _selectedReportType;
+            set => SetField(ref _selectedReportType, value);
+        }
+
+        public ReportsViewModel() 
+        {
+            // Initialize Report Types
+            ReportTypes = new ObservableCollection<ReportType>
+            {
+                new ReportType { Id = ReportTypeEnum.CompletedProjects, Name = "Количество выполненных проектов за период" },
+                new ReportType { Id = ReportTypeEnum.EmployeeWorkload, Name = "Загруженность сотрудников" },
+                new ReportType { Id = ReportTypeEnum.ClientOrderHistory, Name = "История заказов по каждому клиенту" }
+            };
+
+            // Set default selected report type
+            SelectedReportType = ReportTypes.FirstOrDefault();
+        }
 
         public void Init(object parameter)
         {
@@ -75,10 +95,15 @@ namespace ArtDesign.ViewModel
 
         private async Task AddReportAsync(object parameter)
         {
-            
             if (DateFrom.HasValue && DateTo.HasValue && DateFrom > DateTo)
             {
                 MessageBox.Show("Дата начала не может быть позже даты окончания.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            if (SelectedReportType == null)
+            {
+                MessageBox.Show("Пожалуйста, выберите тип отчета.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
                 return;
             }
 
@@ -92,7 +117,6 @@ namespace ArtDesign.ViewModel
                 string fileName = $"report_{DateTime.Now:yyyyMMdd_HHmmss}.pdf";
                 string fullPath = Path.Combine(folder, fileName);
 
-               
                 var clients = (await _dataManager.Clients.GetAllAsync()).ToList();
                 var projects = (await _dataManager.Projects.GetAllAsync()).ToList();
                 var statuses = (await _dataManager.Statuses.GetAllAsync()).ToList();
@@ -100,7 +124,6 @@ namespace ArtDesign.ViewModel
                 var workStages = (await _dataManager.WorkStages.GetAllAsync()).ToList();
                 var roles = (await _dataManager.Roles.GetAllAsync()).ToList();
 
-                
                 foreach (var project in projects)
                 {
                     project.Status = statuses.FirstOrDefault(s => s.ID == project.StatusId);
@@ -115,7 +138,6 @@ namespace ArtDesign.ViewModel
                     employee.WorkStages = workStages.Where(ws => ws.EmployeeId == employee.ID).ToList();
                 }
 
-             
                 var generator = new PdfReportGenerator();
                 await Task.Run(() => generator.GenerateReport(
                     DateFrom,
@@ -125,10 +147,10 @@ namespace ArtDesign.ViewModel
                     clients,
                     statuses,
                     workStages,
-                    fullPath
+                    fullPath,
+                    SelectedReportType.Id // Pass the selected report type
                 ));
 
-           
                 var entity = new FileEntity
                 {
                     FileName = fileName,
@@ -136,17 +158,9 @@ namespace ArtDesign.ViewModel
                     ProjectId = 0 
                 };
 
-       
-                bool addSuccess = true;
-                if (addSuccess)
-                {
-                    Reports.Add(entity);
-                    MessageBox.Show($"Отчет \"{fileName}\" создан в {folder}.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                else
-                {
-                    MessageBox.Show("Не удалось добавить запись отчета в базу данных.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                // Assume the addition to the database is successful
+                Reports.Add(entity);
+                MessageBox.Show($"Отчет \"{fileName}\" создан в {folder}.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -211,5 +225,20 @@ namespace ArtDesign.ViewModel
                 }
             }
         }
+    }
+
+    // Enum for Report Types
+    public enum ReportTypeEnum
+    {
+        CompletedProjects,
+        EmployeeWorkload,
+        ClientOrderHistory
+    }
+
+    // Model for Report Type
+    public class ReportType
+    {
+        public ReportTypeEnum Id { get; set; }
+        public string Name { get; set; }
     }
 }

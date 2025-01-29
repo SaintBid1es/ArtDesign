@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using ArtDesign.Database;
 using ArtDesign.Helpers;
@@ -11,7 +12,7 @@ namespace ArtDesign.ViewModel.Templates.Windows
     {
         private readonly DataManager _dataManager;
         private readonly bool _isNew;
-
+        private static readonly Regex onlyNumbers = new Regex("[^0-9.-]+");
         public Client Client { get; set; }
 
         public RelayCommand SaveCommand { get; }
@@ -35,7 +36,36 @@ namespace ArtDesign.ViewModel.Templates.Windows
                 return;
             }
 
-            if (_isNew)
+
+            if (Client.Surname.Length < 4 || Client.Surname.Length > 20)
+            {
+                MessageBox.Show("Фамилию от 4 до 20 символов");
+                return;
+            }
+            if (Client.Phone.ToString().Length < 4 || Client.Phone.ToString().Length > 8)
+            {
+                MessageBox.Show("Телефон от 4 до 8 символов");
+                return;
+            }
+            if (Client.Name.Length < 4 || Client.Name.Length > 20)
+            {
+                MessageBox.Show("Имя от 4 до 20 символов");
+                return;
+            }
+            if (!Regex.Match(Client.Name, @"[а-яА-Я]|[a-zA-Z]").Success)
+            {
+                MessageBox.Show("Только буквы в имени");
+                return;
+            }
+            if (!Regex.Match(Client.Surname, @"[а-яА-Я]|[a-zA-Z]").Success)
+            {
+                MessageBox.Show("Только буквы в фамилии");
+                return;
+            }
+           
+           
+
+                if (_isNew)
             {
                 var ok = await _dataManager.Clients.AddAsync(Client);
                 if (!ok) 
